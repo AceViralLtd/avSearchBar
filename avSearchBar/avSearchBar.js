@@ -136,19 +136,30 @@
                 }
 
                 // Build request body based on parameters
-                let postBody = plugin.settings.instantSearchBody;
-                $.each(postBody, function (index, value) {
+                let requestParams = plugin.settings.instantSearchBody;
+                $.each(requestParams, function (index, value) {
                     if (value.toString() == 'avSearchBoxTermHere') {
-                        postBody[index] = term;
+                        requestParams[index] = term;
                     }
                 });
+
+                let qs = "?";
+                let postBody;
+                if ("GET" === plugin.settings.instantSearchMethod || "get" === plugin.settings.instantSearchMethod) {
+                    qs += $.param(requestParams);
+                } else {
+                    postBody = new FormData;
+                    for (let key in requestParams) {
+                        postBody.append(key, requestParams[key]);
+                    }
+                }
 
                 // Show the search results box
                 $(`${plugin.el.selector} .${plugin.settings.instantSearchResultClass}`).show();
                 resetSearchResults();
 
                 // Fetch results
-                fetch(plugin.settings.instantSearchUrl, {
+                fetch(`${plugin.settings.instantSearchUrl}${qs}`, {
                     method: plugin.settings.instantSearchMethod,
                     body: postBody
                 }).then(function (response) {

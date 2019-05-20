@@ -44,6 +44,7 @@
             $("#avSearchBar").avSearchBar({
                 instantSearch: true,
                 instantSearchUrl: 'exampleResponse.json',
+                instantSearchMethod: "GET",
                 instantSearchMapResultToTemplate: function(data) {
                     return {
                         'name': data.name,
