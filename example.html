@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example Search</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="avSearchBar/avSearchBar.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="avSearchBar/avSearchBar.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <style>
+        html, body {
+            padding: 0px;
+            margin: 0px;
+
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .example-topbar {
+            box-sizing: border-box;
+
+            height: 40px;
+
+            background-color: #d42f63;
+        }
+
+        .example-topbar .title {
+            display: inline-block;
+            padding: 8px 10px;
+
+            color: #fff;
+            font-size: 18px;
+        }
+
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            var avSearchBar = new $.avSearchBar(
+                $('#avSearchBar'),
+                {
+                    instantSearch: true,
+                    instantSearchUrl: 'exampleResponse.json',
+                    instantSearchMapResultToTemplate: function(data) {
+                        return {
+                            'name': data.name,
+                            'email': data.email,
+                            'link': data.link
+                        };
+                    }
+                }
+            );
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="example-topbar">
+            <span class="title">Search Bar Example -></span>
+            <span id="avSearchBar" class="av-search-bar">
+                <span class="search-button"></span>
+                <form class="search-box">
+                    <input class="search-input" value="Search" />
+                    <div class="search-results">
+                        <div class="loading">loading...</div>
+                        <div class="no-results">No Results</div>
+                        <div class="results"></div>
+                        <div class="result-template">
+                            <a class="result" href="$link">
+                                <div class="name">$name</div>
+                                <div class="email">$email</div>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </span>
+        </div>
+    </header>
+</body>
+</html>

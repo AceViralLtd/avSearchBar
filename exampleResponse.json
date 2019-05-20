@@ -1,0 +1,28 @@
+{
+  "otherResponseObject": {
+    "example": "Example"
+  },
+  "errors": {},
+  "searchResults": [
+    {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "link": "example.html"
+    },
+    {
+      "name": "Jane Doe",
+      "email": "jane.joe@aceviral.com",
+      "link": "example.html"
+    },
+    {
+      "name": "Trevor",
+      "email": "doeEater@example.com",
+      "link": "example.html"
+    }
+  ],
+  "More Data": {
+    "option1": {
+      "test": "testing"
+    }
+  }
+}
