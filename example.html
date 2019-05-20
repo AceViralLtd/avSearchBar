@@ -41,20 +41,17 @@
 
     <script>
         $(document).ready(function() {
-            var avSearchBar = new $.avSearchBar(
-                $('#avSearchBar'),
-                {
-                    instantSearch: true,
-                    instantSearchUrl: 'exampleResponse.json',
-                    instantSearchMapResultToTemplate: function(data) {
-                        return {
-                            'name': data.name,
-                            'email': data.email,
-                            'link': data.link
-                        };
-                    }
+            $("#avSearchBar").avSearchBar({
+                instantSearch: true,
+                instantSearchUrl: 'exampleResponse.json',
+                instantSearchMapResultToTemplate: function(data) {
+                    return {
+                        'name': data.name,
+                        'email': data.email,
+                        'link': data.link
+                    };
                 }
-            );
+            });
         });
     </script>
 </head>
