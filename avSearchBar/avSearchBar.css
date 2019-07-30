@@ -1,7 +1,7 @@
 
 .av-search-bar {
   font-size: 17px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'open sans', sans-serif;
 }
 
 .av-search-bar .search-button {
@@ -12,7 +12,7 @@
   height: 40px;
 
   background-color: #fd5b8e;
-  background-image: url('../img/search.png');
+  background-image: url('img/search.png');
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -42,7 +42,7 @@
   float: right;
   width: 350px;
 
-  background-color: #EEE;
+  background-color: #eee;
 }
 
 .av-search-bar .search-results .result-template {
@@ -58,7 +58,7 @@
 }
 
 .av-search-bar .search-results .result:hover {
-  background-color: #DDD;
+  background-color: #ddd;
 }
 
 .av-search-bar .search-results .result .name {

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -d "./dst" ]; then
+	rm -rf dst
+fi
+
+mkdir ./dst
+
+npm run-script build
