@@ -43,6 +43,7 @@
         $(document).ready(function() {
             $("#avSearchBar").avSearchBar({
                 instantSearch: {
+<<<<<<< HEAD
                     enabled: true,
                 },
                 request: {
@@ -50,6 +51,15 @@
                     method: "GET",
                 },
                 resultMapper: function(data) {
+=======
+                    enabled: true
+                },
+                request: {
+                    url: 'exampleResponse.json',
+                    method: "GET"
+                },
+                resutMapper: function(data) {
+>>>>>>> 50799e383132e1b8cb2265dfea83c4a4ec529248
                     return {
                         'name': data.name,
                         'email': data.email,

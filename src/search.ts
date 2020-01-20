@@ -68,6 +68,11 @@ export default class AvSearchBar
     {
         $(".no-results", this.$element).hide();
         $(this.config.selector.results + " .loading", this.$element).show();
+        this.clearSearchResults();
+    }
+
+    private clearSearchResults(): void
+    {
         $(this.config.selector.resultsContainer, this.$element).html('');
     }
 
@@ -135,7 +140,9 @@ export default class AvSearchBar
                 }
             },
             keyup: (e: KeyboardEvent) => {
+                console.log("HIT");
                 if (!this.config.instantSearch.enabled) {
+                    console.log("HIT NOT");
                     return;
                 }
 
@@ -146,12 +153,15 @@ export default class AvSearchBar
 
                 // on enter
                 if (~[13, 38, 40].indexOf(e.keyCode)) {
+                    console.log("HIT KEY");
                     return;
                 }
 
                 this.keyTimeout = setTimeout((e: Event) => {
                     this.runInstantSearch($input.val());
                 }, this.config.instantSearch.keyTimeout);
+
+                console.log("HIT END");
             }
         });
 
@@ -194,6 +204,7 @@ export default class AvSearchBar
             return response.json();
         }).then((json: any) => {
             $(".loading", $results).hide();
+            this.clearSearchResults();
             this.processSearchResults(json);
         });
     }
