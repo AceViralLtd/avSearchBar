@@ -11,3 +11,5 @@ import { Config } from './config';
         });
     };
 })(jQuery);
+
+export { AvSearchBar };

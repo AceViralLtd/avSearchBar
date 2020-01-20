@@ -57,7 +57,8 @@ export default class AvSearchBar
         let template = $(this.config.selector.template, this.$element).html();
 
         $.each(data, (key: string, val: string) => {
-            template = template.toString().replace(`$${key}`, val);
+            let regexp = new RegExp(`\\$${key}`, "g");
+            template = template.toString().replace(regexp, val);
         });
     
         $(this.config.selector.resultsContainer).append(template);
