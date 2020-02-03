@@ -1,7 +1,9 @@
-import { Config, defaultConfig } from './config';
+import { Config, defaultConfig, SearchType } from './config';
 
 export default class AvSearchBar
 {
+    public static TYPE = SearchType;
+
     private keyTimeout: any;
     private $element: JQuery;
     private config: Config;
@@ -32,9 +34,28 @@ export default class AvSearchBar
         this.resetSearchBar();
     }
 
+    public addResults(data: any, show: boolean = false): void
+    {
+        this.processSearchResults(data);
+
+        if (show) {
+            let $results = $(this.config.selector.results);
+
+            $results.show();
+            $results.find(this.config.selector.resultsContainer)
+                .find(this.config.selector.result).show();
+
+            $results.find(".no-results, .loading").hide();
+        }
+    }
+
     private tryFindErrors(): void
     {
-        if (this.config.instantSearch.enabled && !this.config.request.url) {
+        if (
+            this.config.instantSearch.enabled 
+            && SearchType.API == this.config.instantSearch.searchType
+            && !this.config.request.url
+        ) {
             console.error("avSearchBar: Instnt serach enabled without api url");
         }
     }
@@ -64,11 +85,14 @@ export default class AvSearchBar
         $(this.config.selector.resultsContainer).append(template);
     }
 
-    private resetSearchResult(): void
+    private resetSearchResult(keepExisting: boolean = false): void
     {
         $(".no-results", this.$element).hide();
         $(this.config.selector.results + " .loading", this.$element).show();
-        this.clearSearchResults();
+
+        if (!keepExisting) {
+            this.clearSearchResults();
+        }
     }
 
     private clearSearchResults(): void
@@ -140,9 +164,7 @@ export default class AvSearchBar
                 }
             },
             keyup: (e: KeyboardEvent) => {
-                console.log("HIT");
                 if (!this.config.instantSearch.enabled) {
-                    console.log("HIT NOT");
                     return;
                 }
 
@@ -153,15 +175,12 @@ export default class AvSearchBar
 
                 // on enter
                 if (~[13, 38, 40].indexOf(e.keyCode)) {
-                    console.log("HIT KEY");
                     return;
                 }
 
                 this.keyTimeout = setTimeout((e: Event) => {
                     this.runInstantSearch($input.val());
                 }, this.config.instantSearch.keyTimeout);
-
-                console.log("HIT END");
             }
         });
 
@@ -176,6 +195,19 @@ export default class AvSearchBar
             return;
         }
 
+        switch (this.config.instantSearch.searchType) {
+            case SearchType.API:
+                this.runApiDrivenSearch($results, query);
+                break;
+
+            case SearchType.RESULTS:
+                this.runLocalDataDrivenSearch($results, query);
+                break;
+        }
+    }
+
+    private runApiDrivenSearch($results: JQuery<HTMLElement>, query: any): void
+    {
         let params = { ...this.config.request.bodyTemplate };
         $.each(params, (index: string, val: any) => {
             if ("avSearchBoxTermHere" === val.toString()) {
@@ -207,5 +239,38 @@ export default class AvSearchBar
             this.clearSearchResults();
             this.processSearchResults(json);
         });
+    }
+
+    private runLocalDataDrivenSearch($results: JQuery<HTMLElement>, query: any)
+    {
+        $results.show();
+        this.resetSearchResult(true);
+
+        let count = 0;
+        $results.find(this.config.selector.resultsContainer).find(this.config.selector.result).each((_, elem) => {
+            let $elem = $(elem);
+            let data = this.config.searchDataExtractor($elem);
+            let match = false;
+
+            for (let i in data) {
+                if (~data[i].toLowerCase().indexOf(query.toLowerCase())) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                count++;
+                $elem.show();
+            } else {
+                $elem.hide();
+            }
+        });
+
+        $results.find(".loading").hide();
+        
+        if (!count) {
+            $results.find(".no-results").show();
+        }
     }
 }

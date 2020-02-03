@@ -5,7 +5,7 @@
     <title>Example Search</title>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="avSearchBar/avSearchBar.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="dst/avSearch.min.js"></script>
@@ -41,33 +41,39 @@
 
     <script>
         $(document).ready(function() {
-            $("#avSearchBar").avSearchBar({
-                instantSearch: {
-<<<<<<< HEAD
-                    enabled: true,
-                },
-                request: {
-                    url: "exampleResponse.json",
-                    method: "GET",
-                },
-                resultMapper: function(data) {
-=======
-                    enabled: true
-                },
-                request: {
-                    url: 'exampleResponse.json',
-                    method: "GET"
-                },
-                resutMapper: function(data) {
->>>>>>> 50799e383132e1b8cb2265dfea83c4a4ec529248
-                    return {
-                        'name': data.name,
-                        'email': data.email,
-                        'link': data.link
-                    };
+            let search = new AvSearchBar(
+                $("#avSearchBar"),
+                {
+                    instantSearch: {
+                        enabled: true,
+                        searchType: AvSearchBar.TYPE.RESULTS
+                    },
+                    request: {
+                        url: "exampleResponse.json",
+                        method: "GET",
+                    },
+                    resultMapper: function(data) {
+                        return {
+                            'name': data.name,
+                            'email': data.email,
+                            'link': data.link
+                        };
+                    },
+                    searchDataExtractor: function($elem) {
+                        return [
+                            $elem.find(".name").html()
+                        ];
+                    }
                 }
-            });
+            );
+
+            fetch("exampleResponse.json")
+                .then(res => res.json())
+                .then(json => {
+                    search.addResults(json, true);
+                });
         });
+
     </script>
 </head>
 <body>

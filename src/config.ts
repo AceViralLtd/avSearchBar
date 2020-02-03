@@ -18,13 +18,20 @@ export interface Config {
 
     instantSearch?: {
         enabled?: boolean;
+        searchType?: SearchType;
         minSearchLen?: number;
         keyTimeout?: number
     };
 
     resultMapper?: Function;
     resutExtractor: Function;
+    searchDataExtractor: Function;
 }
+
+export enum SearchType {
+    API,
+    RESULTS
+};
 
 export const defaultConfig: Config = {
     placeholderText: "Search",
@@ -47,6 +54,7 @@ export const defaultConfig: Config = {
 
     instantSearch: {
         enabled: false,
+        searchType: SearchType.API,
         minSearchLen: 2,
         keyTimeout: 500,
     },
@@ -57,5 +65,13 @@ export const defaultConfig: Config = {
 
     resutExtractor: data => {
         return data.searchResults ? [ ...data.searchResults ] : [];
+    },
+
+    searchDataExtractor: $elem => {
+        return [
+            $elem.html
+        ];
     }
 };
+
+

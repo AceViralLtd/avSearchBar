@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -d "./dst" ]; then
-	rm -rf dst
+    rm -rf dst
 fi
 
 mkdir ./dst
