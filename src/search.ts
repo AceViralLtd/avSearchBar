@@ -95,6 +95,22 @@ export default class AvSearchBar
         }
     }
 
+    private showAllResults(): void
+    {
+        let $results = $(this.config.selector.results);
+        let $entries = $results.find(this.config.selector.resultsContainer)
+            .find(this.config.selector.result);
+
+        $results.find(".loading").hide();
+
+        if ($entries.length) {
+            $entries.show();
+            $results.find(".no-results").hide();
+        } else {
+            $results.find(".no-results").show();
+        }
+    }
+
     private clearSearchResults(): void
     {
         $(this.config.selector.resultsContainer, this.$element).html('');
@@ -191,7 +207,11 @@ export default class AvSearchBar
         let $results = $(this.config.selector.results, this.$element);
 
         if (query.length <= this.config.instantSearch.minSearchLen) {
-            $results.hide();
+            if (AvSearchBar.TYPE.RESULTS == this.config.instantSearch.searchType) {
+                this.showAllResults();
+            } else {
+                $results.hide();
+            }
             return;
         }
 
