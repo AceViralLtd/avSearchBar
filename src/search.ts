@@ -5,8 +5,16 @@ export default class AvSearchBar
     public static TYPE = SearchType;
 
     private keyTimeout: any;
-    private $element: JQuery;
     private config: Config;
+
+    private $element: JQuery<HTMLElement>;
+    private $button: JQuery<HTMLElement>;
+    private $box: JQuery<HTMLElement>;
+    private $input: JQuery<HTMLElement>;
+    private $resultsContainer: JQuery<HTMLElement>;
+    private $results: JQuery<HTMLElement>;
+    private $template: JQuery<HTMLElement>;
+
 
     public constructor($element: JQuery, config: Config)
     {
@@ -29,6 +37,7 @@ export default class AvSearchBar
             }
         };
 
+        this.assignElements();
         this.tryFindErrors();
         this.setupBinds();
         this.resetSearchBar();
@@ -39,14 +48,22 @@ export default class AvSearchBar
         this.processSearchResults(data);
 
         if (show) {
-            let $results = $(this.config.selector.results);
 
-            $results.show();
-            $results.find(this.config.selector.resultsContainer)
-                .find(this.config.selector.result).show();
+            this.$results.show();
+            this.$resultsContainer.find(this.config.selector.result).show();
 
-            $results.find(".no-results, .loading").hide();
+            this.$results.find(".no-results, .loading").hide();
         }
+    }
+
+    private assignElements(): void
+    {
+        this.$button = this.$element.find(this.config.selector.button);
+        this.$box = this.$element.find(this.config.selector.box);
+        this.$input = this.$element.find(this.config.selector.input);
+        this.$resultsContainer = this.$element.find(this.config.selector.resultsContainer);
+        this.$results = this.$element.find(this.config.selector.results);
+        this.$template = this.$element.find(this.config.selector.template);
     }
 
     private tryFindErrors(): void
@@ -75,20 +92,20 @@ export default class AvSearchBar
 
     private addSearchResult(data: any): void
     {
-        let template = $(this.config.selector.template, this.$element).html();
+        let template = this.$template.html();
 
         $.each(data, (key: string, val: string) => {
             let regexp = new RegExp(`\\$${key}`, "g");
             template = template.toString().replace(regexp, val);
         });
     
-        $(this.config.selector.resultsContainer).append(template);
+        this.$resultsContainer.append(template);
     }
 
     private resetSearchResult(keepExisting: boolean = false): void
     {
         $(".no-results", this.$element).hide();
-        $(this.config.selector.results + " .loading", this.$element).show();
+        this.$results.find(".loading").show();
 
         if (!keepExisting) {
             this.clearSearchResults();
@@ -97,41 +114,35 @@ export default class AvSearchBar
 
     private showAllResults(): void
     {
-        let $results = $(this.config.selector.results);
-        let $entries = $results.find(this.config.selector.resultsContainer)
-            .find(this.config.selector.result);
+        let $entries = this.$resultsContainer.find(this.config.selector.result);
 
-        $results.find(".loading").hide();
+        this.$results.find(".loading").hide();
 
         if ($entries.length) {
             $entries.show();
-            $results.find(".no-results").hide();
+            this.$results.find(".no-results").hide();
         } else {
-            $results.find(".no-results").show();
+            this.$results.find(".no-results").show();
         }
     }
 
     private clearSearchResults(): void
     {
-        $(this.config.selector.resultsContainer, this.$element).html('');
+        this.$resultsContainer.html('');
     }
 
     private resetSearchBar(): void
     {
-        $(this.config.selector.input, this.$element).val(this.config.placeholderText);
+        this.$input.val(this.config.placeholderText);
     }
 
     private setupBinds(): void
     {
-        let $button = $(this.config.selector.button, this.$element);
-        let $box = $(this.config.selector.box, this.$element);
-        let $input = $(this.config.selector.input, this.$element);
+        this.$button.on("click", () => {
+                this.$box.toggle();
 
-        $button.on("click", () => {
-                $box.toggle();
-
-                if ($input.is(":visible")) {
-                    $input.focus();
+                if (this.$input.is(":visible")) {
+                    this.$input.focus();
                 }
             }
         );
@@ -168,15 +179,15 @@ export default class AvSearchBar
             }
         });
 
-        $input.on({
+        this.$input.on({
             focus: () => {
-                if ($input.val() === this.config.placeholderText) {
-                    $input.val("");
+                if (this.$input.val() === this.config.placeholderText) {
+                    this.$input.val("");
                 }
             },
             blur: () => {
                 if ("" === this.config.placeholderText) {
-                    $input.val(this.config.placeholderText);
+                    this.$input.val(this.config.placeholderText);
                 }
             },
             keyup: (e: KeyboardEvent) => {
@@ -195,7 +206,7 @@ export default class AvSearchBar
                 }
 
                 this.keyTimeout = setTimeout((e: Event) => {
-                    this.runInstantSearch($input.val());
+                    this.runInstantSearch(this.$input.val());
                 }, this.config.instantSearch.keyTimeout);
             }
         });
@@ -204,24 +215,22 @@ export default class AvSearchBar
 
     private runInstantSearch(query: any): void
     {
-        let $results = $(this.config.selector.results, this.$element);
-
         if (query.length <= this.config.instantSearch.minSearchLen) {
             if (AvSearchBar.TYPE.RESULTS == this.config.instantSearch.searchType) {
                 this.showAllResults();
             } else {
-                $results.hide();
+                this.$results.hide();
             }
             return;
         }
 
         switch (this.config.instantSearch.searchType) {
             case SearchType.API:
-                this.runApiDrivenSearch($results, query);
+                this.runApiDrivenSearch(this.$results, query);
                 break;
 
             case SearchType.RESULTS:
-                this.runLocalDataDrivenSearch($results, query);
+                this.runLocalDataDrivenSearch(this.$results, query);
                 break;
         }
     }
@@ -272,8 +281,12 @@ export default class AvSearchBar
             let data = this.config.searchDataExtractor($elem);
             let match = false;
 
+            if (!query) {
+                return;
+            }
+
             for (let i in data) {
-                if (~data[i].toLowerCase().indexOf(query.toLowerCase())) {
+                if (data[i] && ~data[i].toLowerCase().indexOf(query.toLowerCase())) {
                     match = true;
                     break;
                 }
