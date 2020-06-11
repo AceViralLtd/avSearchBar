@@ -26,6 +26,7 @@ export interface Config {
     resultMapper?: Function;
     resutExtractor: Function;
     searchDataExtractor: Function;
+    onLoadComplete: Function;
 }
 
 export enum SearchType {
@@ -71,7 +72,9 @@ export const defaultConfig: Config = {
         return [
             $elem.html
         ];
-    }
+    }, 
+
+    onLoadComplete: null
 };
 
 

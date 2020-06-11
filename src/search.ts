@@ -267,6 +267,12 @@ export default class AvSearchBar
             $(".loading", $results).hide();
             this.clearSearchResults();
             this.processSearchResults(json);
+        }).then(() => {
+            if (!this.config.onLoadComplete) {
+                return;
+            }
+
+            this.config.onLoadComplete();
         });
     }
 
