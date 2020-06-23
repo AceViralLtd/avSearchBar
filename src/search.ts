@@ -186,9 +186,9 @@ export default class AvSearchBar
                 }
             },
             blur: () => {
-                if ("" === this.config.placeholderText) {
-                    this.$input.val(this.config.placeholderText);
-                }
+                // if ("" === this.config.placeholderText) {
+                //     this.$input.val(this.config.placeholderText);
+                // }
             },
             keyup: (e: KeyboardEvent) => {
                 if (!this.config.instantSearch.enabled) {
